@@ -8,7 +8,6 @@ const { process } = require("./process");
 const router = express.Router();
 
 router.post("/extract", async (req, res) => {
-  console.log("hello");
   const body = req.body;
   try {
     const result = await process(exercise_extract_prompt, body.text);
