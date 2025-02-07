@@ -1,30 +1,31 @@
 const express = require("express");
 const {
-  exercise_extract_prompt,
-  exercise_generate_prompt,
-} = require("./utils/prompts");
-const { process } = require("./process");
+  sendNotificationToGroup,
+  sendNotificationToIndividual,
+} = require("./utils/firebase");
 
 const router = express.Router();
 
-router.post("/extract", async (req, res) => {
-  const body = req.body;
+router.post("/notification/batch", async (req, res) => {
+  const { tokens, type, details } = req.body;
   try {
-    const result = await process(exercise_extract_prompt, body.text);
+    const result = await sendNotificationToGroup(tokens, type, details);
     res.json(result);
   } catch (error) {
-    res.status(500).send("An error occurred while processing the text.");
+    res.status(500).send("An error occurred during the process.");
   }
 });
 
-router.post("/generate/:count", async (req, res) => {
-  const body = req.body;
-  const limit = parseInt(req.params.count, 10);
+router.post("/notification/single", async (req, res) => {
+  const { token, type, details } = req.body;
+
+  console.log(token, type, details);
+
   try {
-    const result = await process(exercise_generate_prompt, body.text, limit);
+    const result = await sendNotificationToIndividual(token, type, details);
     res.json(result);
   } catch (error) {
-    res.status(500).send("An error occurred while processing the text.");
+    res.status(500).send("An error occurred during the process.");
   }
 });
 
